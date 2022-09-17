@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account" xml:space="preserve">
+    <value>帐号</value>
+  </data>
+  <data name="AccountRequired" xml:space="preserve">
+    <value>帐号必填</value>
+  </data>
+  <data name="AccountRule" xml:space="preserve">
+    <value>帐号字元限3~20码，英文和数字(中间可包含一个【_】或【.】)。</value>
+  </data>
+  <data name="Birthday" xml:space="preserve">
+    <value>生日</value>
+  </data>
+  <data name="BirthdayRequired" xml:space="preserve">
+    <value>生日必填</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>确认密码</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>建立帐号</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>电子信箱</value>
+  </data>
+  <data name="EmailRequired" xml:space="preserve">
+    <value>电子信箱必填</value>
+  </data>
+  <data name="en-US" xml:space="preserve">
+    <value>英文</value>
+  </data>
+  <data name="EnterAccountNotice" xml:space="preserve">
+    <value>请输入帐号...</value>
+  </data>
+  <data name="EnterBirthdayNotice" xml:space="preserve">
+    <value>请输入生日...</value>
+  </data>
+  <data name="EnterEmailNotice" xml:space="preserve">
+    <value>请输入电子信箱...</value>
+  </data>
+  <data name="EnterNameNotice" xml:space="preserve">
+    <value>请输入姓名...</value>
+  </data>
+  <data name="EnterPasswordAgainNotice" xml:space="preserve">
+    <value>请再次输入密码...</value>
+  </data>
+  <data name="EnterPasswordNotice" xml:space="preserve">
+    <value>请输入密码...</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>忘记密码 ?</value>
+  </data>
+  <data name="ForgotPasswordNotice" xml:space="preserve">
+    <value>不用担心，我们会向您发送一封电子邮件以重置您的密码。</value>
+  </data>
+  <data name="HaveAccount" xml:space="preserve">
+    <value>已有帐号</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>无效的电子信箱格式。</value>
+  </data>
+  <data name="LanguageSetting" xml:space="preserve">
+    <value>语言设定</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>姓名</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>姓名必填</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="PasswordCompareNotice" xml:space="preserve">
+    <value>密码不相符</value>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>密码必填</value>
+  </data>
+  <data name="PasswordRule" xml:space="preserve">
+    <value>密码限4~20个字。</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>重置密码</value>
+  </data>
+  <data name="SentEmail" xml:space="preserve">
+    <value>信件已寄出。</value>
+  </data>
+  <data name="SignIn" xml:space="preserve">
+    <value>登入</value>
+  </data>
+  <data name="SignInNotice" xml:space="preserve">
+    <value>请输入使用者帐密。</value>
+  </data>
+  <data name="SignUpNotice" xml:space="preserve">
+    <value>请输入使用者资讯。</value>
+  </data>
+  <data name="zh-CN" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="zh-TW" xml:space="preserve">
+    <value>繁体中文</value>
+  </data>
+</root>
