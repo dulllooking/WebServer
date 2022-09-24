@@ -126,3 +126,120 @@ async function fetchData(method, url, data) {
         return e;
     }
 }
+
+async function customFetch(url, settings) {
+    try {
+        const fetchResponse = await fetch(`${url}`, settings);
+        const result = fetchResponse.json();
+        return result;
+    } catch (e) {
+        return e;
+    }
+}
+
+$.fn.Select2User = async function (options, onchange) {
+    const dataURL = '/Common/FetchUser';
+
+    //option 初始值設定
+    options = options || {};
+    options.rowCount = options.rowCount || 30;
+    options.language = options.language || 'zh-TW';
+    options.placeholder = options.placeholder || ` `;
+    options.allowClear = (options.allowClear == null || options.allowClear == undefined) ? true : options.allowClear;
+    options.tags = options.tags || false;
+
+    options.ajax = options.ajax || {};
+    options.ajax.delay = options.ajax.delay || 250;
+    options.ajax.processResults = options.ajax.processResults || function (data, params) {
+        return {
+            results: data.results,
+            pagination: {
+                "more": data.pagination
+            }
+        }
+    };
+    onchange = onchange || function (e) { };
+
+    //可能會有多個 select
+    const $objs = $(this);
+    for (let ix = 0; ix < $objs.length; ix++) {
+        let $obj = $objs.eq(ix);
+        // 初始值可能會有多個
+        let currentValue = $obj.attr('defaultvalue');
+        if (currentValue === null || currentValue === undefined)
+            currentValue = [];
+        else
+            currentValue = currentValue.split(',');
+
+        //初始值
+        const data = await customFetch(dataURL, {
+            headers: {
+                'user-agent': navigator.userAgent,
+                'content-type': 'application/json',
+            },
+            body: JSON.stringify({ 'values': currentValue }),
+            method: 'POST',
+        });
+        for (let i = 0; i < data.results.length; i++) {
+            $obj.append(new Option(data.results[i].text, data.results[i].id, true, true));
+        }
+
+        options.ajax.transport = function (params, success, failure) {
+            return customFetch(dataURL, {
+                headers: {
+                    'user-agent': navigator.userAgent,
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'page': params.data.page || 1, // 第幾頁
+                    'rows': options.rowCount, // 每頁顯示幾行
+                    'parameter': params.data.term,
+                }),
+                method: 'POST',
+            }).catch(error => {
+                failure(error);
+            }).then(data => {
+                success(data, params);
+            });
+        };
+        //搜尋的結果
+        options.templateResult = function (state) {
+            if (!state.id || state.id === "") {
+                return $(`<span>${options.placeholder}</span>`);
+            }
+            if ($obj.val() !== null && $obj.val() !== undefined)
+                if ($obj.attr('multiple') !== undefined) {
+                    if ($obj.val().map((x) => x.toUpperCase()).indexOf(state.id.toUpperCase()) >= 0) {
+                        //排除已選的
+                        return null;
+                    }
+                }
+                else {
+                    if ($obj.val().toUpperCase() === state.id.toUpperCase()) {
+                        //排除已選的
+                        return null;
+                    }
+                }
+            let obj = JSON.parse(state.text);
+            let title = `【${obj.account}】${obj.name}`.replace(/"/g, '&quot;');
+            let template = `<span title="${title}">${title}</span>`;
+            return $(template);
+        };
+        //選擇的資料
+        options.templateSelection = function (state) {
+            if (!state.id || state.id === "") {
+                return $(`<span>${options.placeholder}</span>`);
+            }
+            let obj = JSON.parse(state.text);
+            let title = `【${obj.account}】${obj.name}`.replace(/"/g, '&quot;');
+            let template = `<span title="${title}">${title}</span>`;
+            return $(template);
+        };
+        //設定change事件
+        $obj.select2(options).on('change', onchange);
+        //刪除初始設定值
+        $obj.removeAttr('defaultvalue');
+    }
+    //回傳自身, 以便後續 chain
+    return this;
+}

@@ -142,5 +142,110 @@ namespace WebServer.Controllers
             }
         }
         #endregion
+
+        public async Task<CardViewModel> GetCardViewModelAsync(string id)
+        {
+            await Task.Yield();
+            CardViewModel model;
+            var card = await _WebServerDBContext.Card.FindAsync(id);
+            if (card == null) {
+                model = new CardViewModel
+                {
+                    Card = new Card
+                    {
+                        ID = Guid.NewGuid().ToString(),
+                    },
+                };
+            }
+            else {
+                model = new CardViewModel
+                {
+                    Card = card,
+                };
+            }
+
+            return model;
+        }
+
+        #region Edit
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            try {
+                return View(await GetCardViewModelAsync(id));
+            }
+            catch (Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(CardViewModel model)
+        {
+            try {
+                if (!ModelState.IsValid) {
+                    var errors = ModelState.Values.Where(s => s.Errors.Any()).Select(s => s);
+                    throw new Exception(errors.First().Errors.First().ErrorMessage);
+                }
+                var card = await _WebServerDBContext.Card.FindAsync(model.Card?.ID);
+                if (card == null)
+                    throw new Exception("卡片不存在");
+                card.UserID = model.Card?.UserID;
+                await _WebServerDBContext.SaveChangesAsync();
+            }
+            catch (Exception e) {
+                ModelState.AddModelError(nameof(CardViewModel.ErrorMessage), e.Message);
+                return View(model);
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
+
+        #region Details
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+            try {
+                return View(await GetCardViewModelAsync(id));
+            }
+            catch (Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+        #endregion
+
+        #region Delete
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try {
+                return View(await GetCardViewModelAsync(id));
+            }
+            catch (Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+        [HttpPost, ActionName(nameof(Delete))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            await Task.Yield();
+            try {
+                var cardHistorys = _WebServerDBContext.CardHistory.Where(s => s.CardID == id).Select(s => s);
+                var card = await _WebServerDBContext.Card.FindAsync(id);
+                if (card == null)
+                    throw new Exception("卡片不存在");
+                if (cardHistorys != null && cardHistorys.Any())
+                    _WebServerDBContext.CardHistory.RemoveRange(cardHistorys);
+                _WebServerDBContext.Card.Remove(card);
+                await _WebServerDBContext.SaveChangesAsync();
+            }
+            catch (Exception e) {
+                ModelState.AddModelError(nameof(CardViewModel.ErrorMessage), e.Message);
+                return View(await GetCardViewModelAsync(id));
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
     }
 }

@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Controller = ViewContext.RouteData.Values["controller"].ToString();
+    ViewBag.Action = ViewContext.RouteData.Values["action"].ToString();
+
+    var baseUrl = $"/{ViewBag.Controller}";
+}
+<div class="py-6">
+    <div class="row clearfix">
+        <div class="col-md-12">
+            <table id="datatableDefault" class="table table-bordered table-striped table-hover">
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(async () => {
+            $('#datatableDefault').CustomDataTable({
+                lang: "@(_SiteService.GetCurrentCulture())",
+                fetchColumns: fetchData('post', '@baseUrl/GetColumns', null),
+                getDataUrl: '@baseUrl/GetData'
+            });
+        });
+    </script>
+}
