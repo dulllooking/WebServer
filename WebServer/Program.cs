@@ -164,4 +164,11 @@ app.MapControllerRoute(
 
 app.MapHub<ChatHub>("/chatHub");
 
+app.MapHub<NotificationHub>("/NotificationHub");
+
+using (var serviceScope = ServiceActivator.GetScope()) {
+    SiteService? siteService = (SiteService?)serviceScope.ServiceProvider.GetService(typeof(SiteService));
+    siteService?.Init().Wait();
+}
+
 app.Run();

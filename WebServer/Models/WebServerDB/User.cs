@@ -10,6 +10,7 @@ namespace WebServer.Models.WebServerDB
         public User()
         {
             Card = new HashSet<Card>();
+            Connection = new HashSet<Connection>();
             ForgotPassword = new HashSet<ForgotPassword>();
         }
 
@@ -22,6 +23,7 @@ namespace WebServer.Models.WebServerDB
         public long IsEnabled { get; set; }
 
         public virtual ICollection<Card> Card { get; set; }
+        public virtual ICollection<Connection> Connection { get; set; }
         public virtual ICollection<ForgotPassword> ForgotPassword { get; set; }
     }
 }

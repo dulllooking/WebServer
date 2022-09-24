@@ -8,21 +8,30 @@
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": "Models\/WebServerDB",
+   "PreserveCasingWithRegex": true,
    "ProjectRootNamespace": "WebServer",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "Language",
+         "Name": "Card",
          "ObjectType": 0
       },
       {
-         "Name": "User",
+         "Name": "CardHistory",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Connection",
          "ObjectType": 0
       },
       {
          "Name": "ForgotPassword",
+         "ObjectType": 0
+      },
+      {
+         "Name": "Language",
          "ObjectType": 0
       },
       {
@@ -34,11 +43,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "Card",
-         "ObjectType": 0
-      },
-      {
-         "Name": "CardHistory",
+         "Name": "User",
          "ObjectType": 0
       },
       {
@@ -63,5 +68,6 @@
    "UseNodaTime": false,
    "UseNullableReferences": false,
    "UseSchemaFolders": false,
-   "UseSpatial": false
+   "UseSpatial": false,
+   "UseT4": false
 }

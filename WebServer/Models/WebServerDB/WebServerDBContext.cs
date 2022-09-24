@@ -20,6 +20,7 @@ namespace WebServer.Models.WebServerDB
 
         public virtual DbSet<Card> Card { get; set; }
         public virtual DbSet<CardHistory> CardHistory { get; set; }
+        public virtual DbSet<Connection> Connection { get; set; }
         public virtual DbSet<ForgotPassword> ForgotPassword { get; set; }
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Menu> Menu { get; set; }
@@ -52,6 +53,17 @@ namespace WebServer.Models.WebServerDB
                 entity.HasOne(d => d.Card)
                     .WithMany(p => p.CardHistory)
                     .HasForeignKey(d => d.CardID);
+            });
+
+            modelBuilder.Entity<Connection>(entity =>
+            {
+                entity.Property(e => e.ConnectDT).HasColumnType("Text");
+
+                entity.Property(e => e.IP).HasColumnType("Text");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Connection)
+                    .HasForeignKey(d => d.UserID);
             });
 
             modelBuilder.Entity<ForgotPassword>(entity =>

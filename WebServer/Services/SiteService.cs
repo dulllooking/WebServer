@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.Reflection;
+using Microsoft.AspNetCore.SignalR;
+using WebServer.Hubs;
 
 namespace WebServer.Services
 {
@@ -21,16 +23,19 @@ namespace WebServer.Services
         private readonly IHttpContextAccessor _context;
         private readonly IConfiguration _configuration;
         private readonly IStringLocalizer<Resource> _localizer;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
         public SiteService(WebServerDBContext WebServerDBContext,
             IHttpContextAccessor context,
             IConfiguration configuration,
-            IStringLocalizer<Resource> localizer)
+            IStringLocalizer<Resource> localizer,
+            IHubContext<NotificationHub> hubContext)
         {
             _WebServerDBContext = WebServerDBContext;
             _context = context;
             _configuration = configuration;
             _localizer = localizer;
+            _hubContext = hubContext;
         }
 
         /// <summary>
@@ -254,6 +259,46 @@ namespace WebServer.Services
                 }
             }
             return columnName;
+        }
+        #endregion
+
+        #region SignalR
+        /// <summary>
+        /// 清除 Connection 記錄
+        /// </summary>
+        /// <returns></returns>
+        public async Task Init()
+        {
+            var connections = _WebServerDBContext.Connection.Select(s => s);
+            _WebServerDBContext.RemoveRange(connections);
+            await _WebServerDBContext.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// 傳送訊息給指定使用者
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public async Task Send(string userId, string title, string message)
+        {
+            try {
+                var data = new
+                {
+                    title = title,
+                    message = message,
+                };
+                //var connections = await _WebServerDBContext.Connection.Where(s => s.UserID.Equals(userId)).Select(s => s.ID).ToListAsync();
+                var connections = await (from a in _WebServerDBContext.Connection
+                                         join b in _WebServerDBContext.User on a.UserID equals b.ID
+                                         where a.UserID == userId || b.Account == userId
+                                         select a.ID).ToListAsync();
+                await _hubContext.Clients.Clients(connections).SendAsync("ReceiveMessage", System.Text.Json.JsonSerializer.Serialize(data));
+            }
+            catch (Exception ex) {
+                throw;
+            }
         }
         #endregion
     }

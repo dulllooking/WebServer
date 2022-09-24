@@ -307,5 +307,26 @@ namespace WebServer.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        #region Message
+        public class MessagePara
+        {
+            public string? UserID { get; set; }
+            public string? Title { get; set; }
+            public string? Message { get; set; }
+        }
+        // https://localhost:7286/Account/Message
+        [HttpPost]
+        public async Task<IActionResult> Message([FromBody] MessagePara arg)
+        {
+            try {
+                await _SiteService.Send(arg.UserID, arg.Title, arg.Message);
+                return Ok();
+            }
+            catch (Exception e) {
+                return BadRequest(e.Message);
+            }
+        }
+        #endregion
     }
 }
