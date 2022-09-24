@@ -1,11 +1,14 @@
 ﻿@{
     Layout = "_Layout";
+    var culture = _SiteService.GetCurrentCulture();
 }
 
 @section Styles{
     <style>
     </style>
 }
+
+<h1>功能測試區</h1>
     <div class="py-6">
         <div class="row clearfix">
             <div class="col-md-12">
@@ -36,10 +39,96 @@
             </div>
         </div>
     </div>
-
+    <span>Select2單選</span>
+    <div class="py-6">
+        <div class="row clearfix">
+            <div class="col-12">
+                <select class="example01 form-control">
+                    <option value="1">A</option>
+                    <option value="2">B</option>
+                    <option value="3">C</option>
+                    <option value="4">D</option>
+                    <option value="5">E</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <span>Select2多選</span>
+    <div class="py-6">
+        <div class="row clearfix">
+            <div class="col-12">
+                <select class="example02 form-control" multiple="multiple">
+                    <option value="1">A</option>
+                    <option value="2">B</option>
+                    <option value="3">C</option>
+                    <option value="4">D</option>
+                    <option value="5">E</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <span>Select2多國語系</span>
+    <div class="py-6">
+        <div class="row clearfix">
+            <div class="col-12">
+                <select class="example03 form-control">
+                    <option value="1">A</option>
+                    <option value="2">B</option>
+                    <option value="3">C</option>
+                    <option value="4">D</option>
+                    <option value="5">E</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <span>Select2遠端資料</span>
+    <div class="py-6">
+        <div class="row clearfix">
+            <div class="col-12">
+                <select class="example04 form-control">
+                </select>
+            </div>
+        </div>
+    </div>
+    <span>toastr提示訊息</span>
+    <div class="py-6">
+        <div class="row clearfix">
+            <div class="col-12">
+            </div>
+        </div>
+    </div>
+    <span>SignalR測試</span>
+    <div class="container">
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-2">User</div>
+            <div class="col-4"><input type="text" id="userInput" /></div>
+        </div>
+        <div class="row">
+            <div class="col-2">Message</div>
+            <div class="col-4"><input type="text" id="messageInput" /></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+            <div class="col-6">
+                <input type="button" id="sendButton" value="Send Message" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <hr />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <ul id="messagesList"></ul>
+        </div>
+    </div>
     @section Scripts{
     <script>
         // 畫面載入完成才執行
+        // _localizer測試
         $(async () => {
             let langUrl = "/libs/DataTables/Languages/@(_SiteService.GetCurrentCulture()).json";
 
@@ -47,6 +136,111 @@
                 "language": {
                     "url": langUrl,
                 },
+            });
+        });
+    </script>
+    <script>
+        // select2 功能
+        $(async () => {
+            $('.example01').select2();
+            $('.example02').select2();
+            $('.example03').select2({
+                language: '@culture',
+            });
+        });
+        $(async () => {
+            const option = {
+                language: '@culture',
+                ajax: {
+                    delay: 250, //延遲時間
+                    processResults: function (data, params) {
+                        return {
+                            results: data.results,
+                            pagination: {
+                                "more": data.pagination
+                            }
+                        }
+                    },
+                    transport: function (params, success, failure) {
+                        let $request = fetch(`/Common/TestRemoteData`, {
+                            headers: {
+                                'user-agent': navigator.userAgent,
+                                'content-type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                'Page': params.data.page || 1, // 第幾頁
+                                'Rows': 10, // 每頁顯示幾筆資料
+                                'Parameter': params.data.term, // 關鍵字查詢
+                            }),
+                            method: 'POST',
+                        }).then(response => {
+                            return response.json();
+                        }).catch(error => {
+                            failure(error);
+                        }).then(data => {
+                            success(data, params);
+                        });
+                        return $request;
+                    },
+                }
+            }
+
+            $('.example04').select2(option);
+        });
+    </script>
+    <script>
+        // toastr 功能
+        $(async () => {
+            toastr.options = {
+                "closeButton": true,
+                "debug": true,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": 0,
+                "extendedTimeOut": 0,
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut",
+                "tapToDismiss": false
+            }
+            toastr["success"](`你好!<br /><br /><button type="button" class="btn clear">Yes</button>`, `測試`);
+        });
+    </script>
+    <script>
+        // SignalR 功能
+        $(async () => {
+            var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+            //Disable the send button until connection is established.
+            document.getElementById("sendButton").disabled = true;
+
+            connection.on("ReceiveMessage", function (user, message) {
+                var li = document.createElement("li");
+                document.getElementById("messagesList").appendChild(li);
+                // We can assign user-supplied strings to an element's textContent because it
+                // is not interpreted as markup. If you're assigning in any other way, you
+                // should be aware of possible script injection concerns.
+                li.textContent = `${user} says ${message}`;
+            });
+
+            connection.start().then(function () {
+                document.getElementById("sendButton").disabled = false;
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            document.getElementById("sendButton").addEventListener("click", function (event) {
+                var user = document.getElementById("userInput").value;
+                var message = document.getElementById("messageInput").value;
+                connection.invoke("SendMessage", user, message).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                event.preventDefault();
             });
         });
     </script>

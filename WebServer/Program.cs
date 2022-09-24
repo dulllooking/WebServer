@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebServer;
+using WebServer.Hubs;
 using WebServer.Models.WebServerDB;
 using WebServer.Services;
 
@@ -111,6 +112,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<IViewRenderService, ViewRenderService>();
 builder.Services.AddScoped<WebServer.Filters.AuthorizeFilter>();
 builder.Services.AddScoped<JWTService>();
+builder.Services.AddSignalR();
 
 // 要注入的服務要寫在此之前
 var app = builder.Build();
@@ -159,5 +161,7 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<ChatHub>("/chatHub");
 
 app.Run();
