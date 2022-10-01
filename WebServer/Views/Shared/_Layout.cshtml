@@ -206,6 +206,16 @@
                 toastr["info"](json.message, json.title);
             });
 
+            connection.on("RefreshDatatable", function (id) {
+                if ($(`#${id}`).length > 0) {
+                    console.log(`RefreshDatatable【${id}】`);
+                    //目前的頁面
+                    const page = $(`#${id}`).DataTable().page.info().page;
+                    //刷新資料
+                    $(`#${id}`).DataTable().page(page).draw(false);
+                }
+            });
+
             // Start the connection.
             start();
         });

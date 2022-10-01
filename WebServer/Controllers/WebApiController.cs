@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using WebServer.Hubs;
 using WebServer.Models.WebServerDB;
 
 namespace WebServer.Controllers
@@ -13,11 +15,14 @@ namespace WebServer.Controllers
     {
         private readonly WebServerDBContext _WebServerDBContext;
         private readonly IHttpContextAccessor _context;
-        public WebApiController(WebServerDBContext WebServerDBContext,
-            IHttpContextAccessor context)
+        private readonly IHubContext<NotificationHub> _hubContext;
+        public WebApiController(WebServerDBContext WebServerDBContext
+            , IHttpContextAccessor context
+            , IHubContext<NotificationHub> hubContext)
         {
             _WebServerDBContext = WebServerDBContext;
             _context = context;
+            _hubContext = hubContext;
         }
 
         // api/Test
@@ -57,6 +62,8 @@ namespace WebServer.Controllers
             await _WebServerDBContext.CardHistory.AddAsync(cardHistory);
             //儲存變更
             await _WebServerDBContext.SaveChangesAsync();
+            //送出更新畫面的訊息 SignalR 即時同步到網站
+            await _hubContext.Clients.All.SendAsync("RefreshDatatable", "timeSheetDatatable");
             return Json(new
             {
                 PunchInDateTime = cardHistory.PunchInDateTime,

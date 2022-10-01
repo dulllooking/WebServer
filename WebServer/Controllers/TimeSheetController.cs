@@ -117,7 +117,8 @@ namespace WebServer.Controllers
                         break;
 
                     default:
-                        info = info.OrderBy(o => o.CardNo);
+                        //info = info.OrderBy(o => o.CardNo);
+                        info = info.OrderByDescending(o => o.PunchInDateTime);
                         break;
                 }
 

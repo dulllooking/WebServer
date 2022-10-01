@@ -7,7 +7,7 @@
 <div class="py-6">
     <div class="row clearfix">
         <div class="col-md-12">
-            <table id="datatableDefault" class="table table-bordered table-striped table-hover">
+            <table id="timeSheetDatatable" class="table table-bordered table-striped table-hover">
             </table>
         </div>
     </div>
@@ -15,7 +15,7 @@
 @section Scripts{
     <script>
         $(async () => {
-            $('#datatableDefault').CustomDataTable({
+            $('#timeSheetDatatable').CustomDataTable({
                 lang: "@(_SiteService.GetCurrentCulture())",
                 fetchColumns: fetchData('post', '@baseUrl/GetColumns', null),
                 getDataUrl: '@baseUrl/GetData'
