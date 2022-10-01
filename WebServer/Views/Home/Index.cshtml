@@ -9,6 +9,7 @@
 }
 
 <h1>功能測試區</h1>
+    <span>Resource自訂多國語系</span>
     <div class="py-6">
         <div class="row clearfix">
             <div class="col-md-12">
@@ -39,6 +40,7 @@
             </div>
         </div>
     </div>
+
     <span>Select2單選</span>
     <div class="py-6">
         <div class="row clearfix">
@@ -53,6 +55,7 @@
             </div>
         </div>
     </div>
+
     <span>Select2多選</span>
     <div class="py-6">
         <div class="row clearfix">
@@ -67,6 +70,7 @@
             </div>
         </div>
     </div>
+
     <span>Select2多國語系</span>
     <div class="py-6">
         <div class="row clearfix">
@@ -81,6 +85,7 @@
             </div>
         </div>
     </div>
+
     <span>Select2遠端資料</span>
     <div class="py-6">
         <div class="row clearfix">
@@ -90,6 +95,7 @@
             </div>
         </div>
     </div>
+
     <span>toastr提示訊息</span>
     <div class="py-6">
         <div class="row clearfix">
@@ -97,6 +103,7 @@
             </div>
         </div>
     </div>
+
     <span>SignalR測試</span>
     <div class="container">
         <div class="row">&nbsp;</div>
@@ -125,7 +132,51 @@
             <ul id="messagesList"></ul>
         </div>
     </div>
-    @section Scripts{
+
+    <span>串流檔案上傳測試</span>
+    <div class="container mt-5">
+        <div class="card container">
+            <div class="card-body">
+                <div class="col-xl-11 col-lg-10 col-md-9 col-12 ">
+                    <div class="row align-items-center mt-5">
+                        <div class="col-md-2 col-xxl-1">
+                            <label for="inputFiles" class="col-form-label ">檔案</label>
+                        </div>
+                        <div class="col-md-8 col-xxl-9  mt-0 mt-md-3">
+                            <input multiple type="file" id="inputFiles" class="form-control" aria-describedby="inputFiles">
+                        </div>
+                        <div class="col-md-2 col-xxl-2">
+                            <button id="btnUpload" class="btn btn-primary">上傳</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <span>檔案下傳</span>
+    <div class="container mt-5">
+        <div class="card container">
+            <div class="card-body">
+                <div class="col-xl-11 col-lg-10 col-md-9 col-12 ">
+                    <div class="row align-items-center mt-5">
+                        <div class="col-md-2 col-xxl-1">
+                            <label for="inputFileId" class="col-form-label ">檔案ID</label>
+                        </div>
+                        <div class="col-md-8 col-xxl-9  mt-0 mt-md-3">
+                            <input type="text" id="inputFileId" class="form-control" aria-describedby="inputFileId">
+                        </div>
+                        <div class="col-md-2 col-xxl-2">
+                            <button id="btnDownload" class="btn btn-primary">下載</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+@section Scripts{
     <script>
         // 畫面載入完成才執行
         // _localizer測試
@@ -139,6 +190,7 @@
             });
         });
     </script>
+
     <script>
         // select2 功能
         $(async () => {
@@ -188,6 +240,7 @@
             $('.example04').select2(option);
         });
     </script>
+
     <script>
         // toastr 功能
         $(async () => {
@@ -211,6 +264,7 @@
             toastr["success"](`你好!<br /><br /><button type="button" class="btn clear">Yes</button>`, `測試`);
         });
     </script>
+
     <script>
         // SignalR 功能
         $(async () => {
@@ -243,5 +297,97 @@
                 event.preventDefault();
             });
         });
+    </script>
+
+    <script>
+        // 串流檔案上傳 功能
+        $(async () => {
+            $(document).on('click', '#btnUpload', async function (e) {
+                if ($('#inputFiles')[0].files.length === 0) {
+                    alert('請選擇檔案!');
+                }
+                else {
+                    //清空畫面
+                    $('.divImage').empty();
+
+                    //將檔案放至FormData
+                    let formData = new FormData();
+                    for (let i = 0; i < $('#inputFiles')[0].files.length; i++) {
+                        formData.append('file', $('#inputFiles')[0].files[i]);
+                    }
+                    //--額外的資料
+                    formData.append('message', 'hellow world');
+
+                    //上傳檔案
+                    const url = `/Streaming/Upload`;
+                    const result = await uploadFile(url, formData);
+                    $('#inputFiles')[0].value = '';
+
+                    if (result.status == 200) {
+                        console.log(result.body);
+                        //上傳成功的識別碼
+                        const ids = result.body.ids;
+                    } else {
+                        alert('錯誤： ' + JSON.stringify(result.body.File));
+                    }
+                }
+            });
+        });
+
+        async function uploadFile(url, data) {
+            try {
+                let settings = {
+                    method: 'post',
+                    body: data,
+                };
+                const fetchResponse = await fetch(`${url}`, settings).then(r => r.json().then(data => ({ status: r.status, body: data })));
+                return fetchResponse;
+            } catch (e) {
+                console.log(e)
+                return e;
+            }
+        }
+    </script>
+
+    <script>
+        //檔案下載
+        $(async () => {
+            $(document).on('click', '#btnDownload', async function (e) {
+                var id = $('#inputFileId').val();
+                if (id === null || id === undefined || id.length === 0) {
+                    alert('請輸入檔案ID');
+                    return;
+                }
+
+                const blob = await downloadBlob('get', `/Streaming/Download/${id}`, null);
+                console.log(blob)
+                if (blob.status == 200) {
+                    const fileName = `可自訂名稱.png`;
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob.body);
+                    link.download = fileName;
+                    link.click();
+                    window.URL.revokeObjectURL(link.href);
+                }
+                else {
+                    alert('下載檔案發生錯誤');
+                }
+            });
+        });
+
+        async function downloadBlob(method, url, data) {
+            try {
+                method = method || 'post';
+                let settings = {
+                    method: method,
+                    body: data,
+                };
+                const fetchResponse = await fetch(`${url}`, settings).then(r => r.blob().then(data => ({ status: r.status, body: data })));
+                return fetchResponse;
+            } catch (e) {
+                console.log(e)
+                return e;
+            }
+        }
     </script>
 }

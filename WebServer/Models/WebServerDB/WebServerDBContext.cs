@@ -21,6 +21,7 @@ namespace WebServer.Models.WebServerDB
         public virtual DbSet<Card> Card { get; set; }
         public virtual DbSet<CardHistory> CardHistory { get; set; }
         public virtual DbSet<Connection> Connection { get; set; }
+        public virtual DbSet<File> File { get; set; }
         public virtual DbSet<ForgotPassword> ForgotPassword { get; set; }
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<Menu> Menu { get; set; }
@@ -64,6 +65,13 @@ namespace WebServer.Models.WebServerDB
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Connection)
                     .HasForeignKey(d => d.UserID);
+            });
+
+            modelBuilder.Entity<File>(entity =>
+            {
+                entity.Property(e => e.Name).IsRequired();
+
+                entity.Property(e => e.Path).IsRequired();
             });
 
             modelBuilder.Entity<ForgotPassword>(entity =>
