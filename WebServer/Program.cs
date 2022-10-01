@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WebServer;
 using WebServer.Hubs;
 using WebServer.Models.WebServerDB;
@@ -10,6 +11,10 @@ using WebServer.Services;
 
 // Program.cs 只會執行一次
 
+var encodings = Encoding.GetEncodings(); // core預設只有7種編碼
+// 解決使用CSVHelper,中文亂碼問題
+Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+var encodings2 = Encoding.GetEncodings(); // 變成116種編碼
 
 var builder = WebApplication.CreateBuilder(args);
 

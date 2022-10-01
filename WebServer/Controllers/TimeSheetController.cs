@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CsvHelper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
+using System.Text;
 using WebServer.Extensions;
 using WebServer.Models;
 using WebServer.Models.WebServerDB;
@@ -32,6 +35,7 @@ namespace WebServer.Controllers
             await Task.Yield();
             return View();
         }
+        #endregion
 
         [HttpPost]
         public async Task<IActionResult> GetColumns()
@@ -139,6 +143,59 @@ namespace WebServer.Controllers
                 return BadRequest(e.Message);
             }
         }
-        #endregion
+
+        //TimeSheet/ExportCSV/{month}
+        [Route("[controller]/[action]/{month}")]
+        [HttpGet()]
+        public async Task<IActionResult> ExportCSV(string month)
+        {
+            await Task.Yield();
+            try {
+                var tmpDate = DateTime.Parse(month + "-01");
+                //列出要顯示的日期
+                var dateList = Enumerable.Range(1, DateTime.DaysInMonth(tmpDate.Year, tmpDate.Month))
+                        .Select(day => (new DateTime(tmpDate.Year, tmpDate.Month, day))
+                        .ToString("yyyy-MM-dd"))
+                        .ToList();
+                //展開資料
+                var records = (from n1 in dateList
+                               from n2 in _WebServerDBContext.Card
+                               join n3 in _WebServerDBContext.User on n2.UserID equals n3.ID
+                               //上班打卡(當天第一次)
+                               from punchIn in _WebServerDBContext.CardHistory.Where(s => s.CardID == n2.ID && s.PunchInDateTime.Substring(0, 10) == n1).OrderBy(s => s.PunchInDateTime).Take(1).DefaultIfEmpty()
+                                   //下班打卡(當天最後一次)
+                               from punchOut in _WebServerDBContext.CardHistory.Where(s => s.CardID == n2.ID && s.PunchInDateTime.Substring(0, 10) == n1).OrderByDescending(s => s.PunchInDateTime).Take(1).DefaultIfEmpty()
+                               orderby n3.Name, n1
+                               select new TimeSheetReportModel
+                               {
+                                   UserName = n3.Name,
+                                   Date = n1,
+                                   PunchInTime = punchIn == null ? "" : punchIn.PunchInDateTime.Substring(11, 8),
+                                   //排除只打一次卡，當天只有一筆資料時填空字串
+                                   PunchOutTime = punchOut == null ? "" : (punchIn.PunchInDateTime == punchOut.PunchInDateTime ? "" : punchOut.PunchInDateTime.Substring(11, 8)),
+                               }).ToList();
+
+                //最後要輸出的檔案
+                byte[] fileStream = Array.Empty<byte>();
+                //轉檔
+                using (var memoryStream = new MemoryStream()) {
+                    //950 => Big5
+                    using (var streamWriter = new StreamWriter(memoryStream, Encoding.GetEncoding(950)))
+                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture)) {
+                        csvWriter.WriteRecords(records);
+                    }
+                    fileStream = memoryStream.ToArray();
+                }
+                //回傳檔案
+                return new FileStreamResult(new MemoryStream(fileStream), "application/octet-stream")
+                {
+                    FileDownloadName = $"{month}.csv",
+                };
+            }
+            catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
