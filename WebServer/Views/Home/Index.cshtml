@@ -364,9 +364,11 @@
                 if (blob.status == 200) {
                     const fileName = `可自訂名稱.png`;
                     const link = document.createElement('a');
+                    //產生本地連結
                     link.href = window.URL.createObjectURL(blob.body);
                     link.download = fileName;
                     link.click();
+                    //釋放資源
                     window.URL.revokeObjectURL(link.href);
                 }
                 else {
@@ -382,6 +384,7 @@
                     method: method,
                     body: data,
                 };
+                //.blob()取二進制資料
                 const fetchResponse = await fetch(`${url}`, settings).then(r => r.blob().then(data => ({ status: r.status, body: data })));
                 return fetchResponse;
             } catch (e) {
