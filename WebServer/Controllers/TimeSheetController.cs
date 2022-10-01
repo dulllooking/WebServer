@@ -183,8 +183,8 @@ namespace WebServer.Controllers
                 byte[] fileStream = Array.Empty<byte>();
                 //轉檔
                 using (var memoryStream = new MemoryStream()) {
-                    //950 => Big5
-                    using (var streamWriter = new StreamWriter(memoryStream, Encoding.GetEncoding(950)))
+                    //using (var streamWriter = new StreamWriter(memoryStream, Encoding.GetEncoding(65001))) //65001 => UTF8
+                    using (var streamWriter = new StreamWriter(memoryStream, Encoding.GetEncoding(950))) //950 => Big5
                     using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture)) {
                         csvWriter.WriteRecords(records);
                     }
